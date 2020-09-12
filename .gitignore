@@ -1,6 +1,8 @@
 #
 venv/
 
+documentation/Notes.md
+
 #
 *.vscode
 
