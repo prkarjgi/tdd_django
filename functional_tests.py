@@ -46,7 +46,7 @@ class NewVisitorTest(unittest.TestCase):
         time.sleep(1)
 
         # They see the new item added to the to-do list
-        self.check_new_item_in_todo("Buy 3 milk bags")
+        self.check_new_item_in_todo("1: Buy 3 milk bags")
 
         # The text box is still there and the user can enter another item. They add
         # another item and hit enter
@@ -56,8 +56,8 @@ class NewVisitorTest(unittest.TestCase):
         time.sleep(1)
 
         # There are now two new items on the to-do list
-        self.check_new_item_in_todo("Buy 3 milk bags")
-        self.check_new_item_in_todo("Buy some butter")
+        self.check_new_item_in_todo("1: Buy 3 milk bags")
+        self.check_new_item_in_todo("2: Buy some butter")
 
         self.fail("CHECK IF THE USER\'S LIST WILL BE REMEMBERED")
         # The user is concerned whether the site will remember their session if they

@@ -1,7 +1,9 @@
 #
 venv/
 
+#
 documentation/Notes.md
+# documentation/*.png
 
 #
 *.vscode
