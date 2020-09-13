@@ -12,6 +12,12 @@ class NewVisitorTest(unittest.TestCase):
     def tearDown(self):
         self.browser.quit()
 
+    # helper method
+    def check_new_item_in_todo(self, item_text):
+        to_do_items = self.browser.find_element_by_id("id_to_do_list")
+        rows = to_do_items.find_elements_by_tag_name("tr")
+        self.assertIn(item_text, (row.text for row in rows))
+
     def test_new_visitor_remember_list(self):
         # User goes to application site
         try:
@@ -40,12 +46,7 @@ class NewVisitorTest(unittest.TestCase):
         time.sleep(1)
 
         # They see the new item added to the to-do list
-        to_do_items = self.browser.find_element_by_id("id_to_do_list")
-        rows = to_do_items.find_elements_by_tag_name("tr")
-        self.assertIn(
-            "Buy 3 milk bags",
-            (row.text for row in rows)
-        )
+        self.check_new_item_in_todo("Buy 3 milk bags")
 
         # The text box is still there and the user can enter another item. They add
         # another item and hit enter
@@ -55,12 +56,8 @@ class NewVisitorTest(unittest.TestCase):
         time.sleep(1)
 
         # There are now two new items on the to-do list
-        table = self.browser.find_element_by_id("id_to_do_list")
-        rows = table.find_elements_by_tag_name("tr")
-        self.assertIn(
-            "Buy some butter",
-            (row.text for row in rows)
-        )
+        self.check_new_item_in_todo("Buy 3 milk bags")
+        self.check_new_item_in_todo("Buy some butter")
 
         self.fail("CHECK IF THE USER\'S LIST WILL BE REMEMBERED")
         # The user is concerned whether the site will remember their session if they
