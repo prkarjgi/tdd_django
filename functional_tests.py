@@ -44,15 +44,25 @@ class NewVisitorTest(unittest.TestCase):
         rows = to_do_items.find_elements_by_tag_name("tr")
         self.assertIn(
             "Buy 3 milk bags",
-            rows
+            (row.text for row in rows)
         )
 
         # The text box is still there and the user can enter another item. They add
         # another item and hit enter
-        self.fail("ADD TESTS FOR SUBSEQUENT ENTRIES AND REMEMBERING THE USER ACTIVITY")
+        inputbox = self.browser.find_element_by_id("id_new_item")
+        inputbox.send_keys("Buy some butter")
+        inputbox.send_keys(Keys.ENTER)
+        time.sleep(1)
 
         # There are now two new items on the to-do list
+        table = self.browser.find_element_by_id("id_to_do_list")
+        rows = table.find_elements_by_tag_name("tr")
+        self.assertIn(
+            "Buy some butter",
+            (row.text for row in rows)
+        )
 
+        self.fail("CHECK IF THE USER\'S LIST WILL BE REMEMBERED")
         # The user is concerned whether the site will remember their session if they
         # close the browser. They see a unique URL for them and there is text
         # explaining what it is.
