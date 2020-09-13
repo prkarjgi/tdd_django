@@ -1,4 +1,5 @@
 from selenium import webdriver
+from selenium.common.exceptions import WebDriverException
 import unittest
 
 
@@ -11,7 +12,11 @@ class NewVisitorTest(unittest.TestCase):
 
     def test_new_visitor_remember_list(self):
         # User goes to application site
-        self.browser.get("http://localhost:8000")
+        try:
+            self.browser.get("http://localhost:8000")
+        except WebDriverException as e:
+            print(e)
+            self.fail('Connection to server failed')
 
         # User sees To-Do in the title of the page and sees To-Do lists in the header
         self.assertIn('To-Do', self.browser.title)
