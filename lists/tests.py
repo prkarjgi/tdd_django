@@ -10,21 +10,6 @@ class HomePageTest(TestCase):
         response = self.client.get('/')
         self.assertTemplateUsed(response, 'home.html')
 
-    def test_not_save_with_GET_request(self):
-        response = self.client.get('/')
-        self.assertEqual(Item.objects.count(), 0)
-
-    def test_can_save_after_POST_request(self):
-        self.client.post('/', data={"new_item_text": "new item in to-do"})
-        self.assertEqual(Item.objects.count(), 1)
-        self.assertEqual(Item.objects.first().text, "new item in to-do")
-
-    def test_can_redirect_after_POST_request(self):
-        response = self.client.post('/', data={"new_item_text": "other new item in to-do"})
-
-        self.assertEqual(response.status_code, 302)
-        self.assertEqual(response['location'], '/lists/list-for-user')
-
 
 # tests on the item model
 class ItemModelTest(TestCase):
@@ -41,17 +26,28 @@ class ItemModelTest(TestCase):
         self.assertEqual(saved2.text, "This is item 2")
 
 
-# tests on the list view
+# tests on the view view_list
 class ListViewTest(TestCase):
     def test_list_view_uses_list_template(self):
-        response = self.client.get('/lists/list-for-user')
+        response = self.client.get('/lists/list-for-user/')
         self.assertTemplateUsed(response, 'list.html')
 
     def test_show_all_list_items(self):
         item1 = Item.objects.create(text="This is new item 1")
         item2 = Item.objects.create(text="This is new item 2")
 
-        response = self.client.get('/lists/list-for-user')
+        response = self.client.get('/lists/list-for-user/')
 
         self.assertContains(response, "This is new item 2")
         self.assertContains(response, "This is new item 1")
+
+
+class NewListTest(TestCase):
+    def test_can_save_after_POST_request(self):
+        self.client.post('/lists/new', data={"new_item_text": "new item in to-do"})
+        self.assertEqual(Item.objects.count(), 1)
+        self.assertEqual(Item.objects.first().text, "new item in to-do")
+
+    def test_can_redirect_after_POST_request(self):
+        response = self.client.post('/lists/new', data={"new_item_text": "other new item in to-do"})
+        self.assertRedirects(response, "/lists/list-for-user/")
