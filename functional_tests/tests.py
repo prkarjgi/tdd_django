@@ -1,7 +1,10 @@
 from selenium import webdriver
 from selenium.webdriver.common.keys import Keys
+from selenium.common.exceptions import WebDriverException
 from django.test import LiveServerTestCase
 import time
+
+MAX_WAIT = 10
 
 
 class NewVisitorTest(LiveServerTestCase):
@@ -12,10 +15,18 @@ class NewVisitorTest(LiveServerTestCase):
         self.browser.quit()
 
     # helper method
-    def check_new_item_in_todo(self, item_text):
-        to_do_items = self.browser.find_element_by_id("id_to_do_list")
-        rows = to_do_items.find_elements_by_tag_name("tr")
-        self.assertIn(item_text, (row.text for row in rows))
+    def wait_for_new_item_in_todo(self, item_text):
+        start_time = time.time()
+        while True:
+            try:
+                to_do_items = self.browser.find_element_by_id("id_to_do_list")
+                rows = to_do_items.find_elements_by_tag_name("tr")
+                self.assertIn(item_text, (row.text for row in rows))
+                return
+            except (AssertionError, WebDriverException) as e:
+                if time.time() - start_time > MAX_WAIT:
+                    raise e
+                time.sleep(0.5)
 
     def test_new_visitor_remember_list(self):
         # User goes to application site
@@ -38,21 +49,19 @@ class NewVisitorTest(LiveServerTestCase):
         # They type the item in the text box and hit enter and the page updates and
         # adds a new item in their to-do list
         inputbox.send_keys(Keys.ENTER)
-        time.sleep(1)
 
         # They see the new item added to the to-do list
-        self.check_new_item_in_todo("1: Buy 3 milk bags")
+        self.wait_for_new_item_in_todo("1: Buy 3 milk bags")
 
         # The text box is still there and the user can enter another item. They add
         # another item and hit enter
         inputbox = self.browser.find_element_by_id("id_new_item")
         inputbox.send_keys("Buy some butter")
         inputbox.send_keys(Keys.ENTER)
-        time.sleep(1)
 
         # There are now two new items on the to-do list
-        self.check_new_item_in_todo("1: Buy 3 milk bags")
-        self.check_new_item_in_todo("2: Buy some butter")
+        self.wait_for_new_item_in_todo("1: Buy 3 milk bags")
+        self.wait_for_new_item_in_todo("2: Buy some butter")
 
         self.fail("CHECK IF THE USER\'S LIST WILL BE REMEMBERED")
         # The user is concerned whether the site will remember their session if they
