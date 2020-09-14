@@ -56,6 +56,7 @@ class NewVisitorTest(LiveServerTestCase):
         # The text box is still there and the user can enter another item. They add
         # another item and hit enter
         inputbox = self.browser.find_element_by_id("id_new_item")
+        # print(self.browser.current_url)
         inputbox.send_keys("Buy some butter")
         inputbox.send_keys(Keys.ENTER)
 
@@ -84,7 +85,7 @@ class NewVisitorTest(LiveServerTestCase):
         self.browser = webdriver.Firefox()
         self.browser.get(self.live_server_url)
         # User 2 sees that none of User 1's items are there
-        page_text = self.browser.find_element_by_id("body").text
+        page_text = self.browser.find_element_by_tag_name("body").text
         self.assertNotIn("Buy a new car", page_text)
         self.assertNotIn("Random values", page_text)
 

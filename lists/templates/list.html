@@ -3,10 +3,15 @@
         <title>To-Do lists</title>
     </head>
     <body>
-        <h1>Start a New To-Do List</h1>
+        <h1>To-Do</h1>
         <form method="POST" action="/">
             <input id="id_new_item" name="new_item_text" placeholder="Enter a new item">
             {% csrf_token %}
         </form>
+        <table id="id_to_do_list">
+            {% for item in items %}
+            <tr><td>{{ forloop.counter }}: {{ item.text }}</td></tr>
+            {% endfor %}
+        </table>
     </body>
 </html>
