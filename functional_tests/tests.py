@@ -28,7 +28,7 @@ class NewVisitorTest(LiveServerTestCase):
                     raise e
                 time.sleep(0.5)
 
-    def test_new_visitor_remember_list(self):
+    def test_can_start_list_for_one_user(self):
         # User goes to application site
         self.browser.get(self.live_server_url)
 
@@ -63,9 +63,47 @@ class NewVisitorTest(LiveServerTestCase):
         self.wait_for_new_item_in_todo("1: Buy 3 milk bags")
         self.wait_for_new_item_in_todo("2: Buy some butter")
 
-        self.fail("CHECK IF THE USER\'S LIST WILL BE REMEMBERED")
-        # The user is concerned whether the site will remember their session if they
-        # close the browser. They see a unique URL for them and there is text
-        # explaining what it is.
+    def test_multiple_users_can_start_new_list(self):
+        # User 1 connects to the application using their browser
+        self.browser.get(self.live_server_url)
 
-        # They click on the URL and see that their to-do list is intact
+        # They add an item and see it has been added
+        inputbox = self.browser.find_element_by_id("id_new_item")
+        inputbox.send_keys("Buy a new car")
+        inputbox.send_keys(Keys.ENTER)
+        self.wait_for_new_item_in_todo("1: Buy a new car")
+
+        # User 1 sees their list has unique URL
+        user1_url = self.browser.current_url
+        self.assertRegex(user1_url, "/lists/.+")
+
+        # User 1 closes their browser
+        self.browser.quit()
+
+        # A new user, User 2 opens their browser and goes to the application.
+        self.browser = webdriver.Firefox()
+        self.browser.get(self.live_server_url)
+        # User 2 sees that none of User 1's items are there
+        page_text = self.browser.find_element_by_id("body").text
+        self.assertNotIn("Buy a new car", page_text)
+        self.assertNotIn("Random values", page_text)
+
+        # User 2 adds an item to the list and sees that is has been added
+        # to their list
+        inputbox = self.browser.find_element_by_id("id_new_item")
+        inputbox.send_keys("Buy a loaf of bread")
+        inputbox.send_keys(Keys.ENTER)
+        self.wait_for_new_item_in_todo("1: Buy a loaf of bread")
+
+        # they see that they have a unique URL created for their lists
+        # this unique URL is not the same as User 1's URL
+        user2_url = self.browser.current_url
+        self.assertRegex(user2_url, "/lists/")
+        self.assertNotEqual(user2_url, user1_url)
+
+        # there is no trace of User 1's activity
+        page_text = self.browser.find_element_by_tag_name("body").text
+        self.assertNotIn("1: Buy a new car", page_text)
+        self.assertIn("1: Buy a loaf of bread", page_text)
+
+        # User 2 and User 1 are satisfied
