@@ -1,6 +1,6 @@
 from django.shortcuts import render, redirect
 from django.http import HttpResponse
-from lists.models import Item
+from lists.models import Item, List
 
 
 def home_page(request):
@@ -13,5 +13,8 @@ def view_list(request):
 
 
 def new_list(request):
-    response = Item.objects.create(text=request.POST["new_item_text"])
+    list_ = List.objects.create()
+    response = Item.objects.create(
+        text=request.POST["new_item_text"], item_list=list_
+    )
     return redirect("/lists/list-for-user/")
