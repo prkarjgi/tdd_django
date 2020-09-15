@@ -57,6 +57,14 @@ class ListViewTest(TestCase):
         self.assertNotContains(response, "This is item 1 of other list")
         self.assertNotContains(response, "This is item 2 of other list")
 
+    def test_passes_correct_list_to_template(self):
+        correct_list = List.objects.create()
+        other_list = List.objects.create()
+
+        response = self.client.get(f"/lists/{correct_list.id}/")
+        self.assertEqual(response.context['list'], correct_list)
+        self.assertNotEqual(response.context['list'], other_list)
+
 
 class NewListTest(TestCase):
     def test_can_save_after_POST_request(self):
@@ -72,3 +80,35 @@ class NewListTest(TestCase):
         )
         list_ = List.objects.first()
         self.assertRedirects(response, f"/lists/{list_.id}/")
+
+
+class NewItemTest(TestCase):
+    def test_can_save_a_POST_request_to_existing_list(self):
+        correct_list = List.objects.create()
+        other_list = List.objects.create()
+
+        self.client.post(
+            f"/lists/{correct_list.id}/add_item",
+            data={
+                "new_item_text": "placeholder text for item"
+            }
+        )
+
+        new_item = Item.objects.first()
+        self.assertEqual(Item.objects.count(), 1)
+        self.assertEqual(new_item.text, "placeholder text for item")
+        self.assertNotEqual(new_item.text, "New text for item")
+        self.assertEqual(new_item.item_list, correct_list)
+        self.assertNotEqual(new_item.item_list, other_list)
+
+    def test_redirects_to_list_view(self):
+        other_list = List.objects.create()
+        correct_list = List.objects.create()
+
+        response = self.client.post(
+            f"/lists/{correct_list.id}/add_item",
+            data={
+                "new_item_text": "new placeholder text"
+            }
+        )
+        self.assertRedirects(response, f"/lists/{correct_list.id}/")
