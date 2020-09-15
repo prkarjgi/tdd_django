@@ -21,7 +21,7 @@ class NewVisitorTest(LiveServerTestCase):
             try:
                 to_do_items = self.browser.find_element_by_id("id_to_do_list")
                 rows = to_do_items.find_elements_by_tag_name("tr")
-                self.assertIn(item_text, (row.text for row in rows))
+                self.assertIn(item_text, [row.text for row in rows])
                 return
             except (AssertionError, WebDriverException) as e:
                 if time.time() - start_time > MAX_WAIT:
