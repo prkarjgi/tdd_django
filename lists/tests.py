@@ -10,6 +10,16 @@ class HomePageTest(TestCase):
         response = self.client.get('/')
         self.assertTemplateUsed(response, 'home.html')
 
+    # def test_home_page_redirects_after_POST_request(self):
+    #     response = self.client.post(
+    #         path='/',
+    #         data={
+    #             "new_text_item": "placeholder text"
+    #         }
+    #     )
+    #     print(response.context['request'])
+    #     self.assertEqual(response.status_code, 302)
+
 
 # tests on the item model
 class ListAndItemModelTest(TestCase):
