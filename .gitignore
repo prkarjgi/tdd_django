@@ -3,7 +3,7 @@ venv/
 
 #
 documentation/Notes.md
-# documentation/*.png
+documentation/*.png
 
 #
 *.vscode
@@ -22,3 +22,5 @@ geckodriver.log
 
 # 
 static/
+
+.env
