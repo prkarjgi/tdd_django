@@ -24,7 +24,7 @@ SECRET_KEY = 'xnlm2u=6o6l15t$c#1h-q4p^k7w58^ai^3mzw8(2nhee2cc1fi'
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['*']
 
 
 # Application definition
