@@ -22,14 +22,14 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # SECURITY WARNING: keep the secret key used in production secret!
 
 # SECURITY WARNING: don't run with debug turned on in production!
-if os.environ.get('DJANGO_DEBUG_FALSE'):
-    DEBUG = False
-    SECRET_KEY = os.environ.get('DJANGO_SECRET_KEY')
-    ALLOWED_HOSTS = [os.environ.get('SITENAME')]
-else:
+if os.environ.get('DJANGO_DEBUG_TRUE'):
     DEBUG = True
     SECRET_KEY = os.environ.get('DEV_SECRET_KEY')
     ALLOWED_HOSTS = []
+else:
+    DEBUG = False
+    SECRET_KEY = os.environ.get('DJANGO_SECRET_KEY')
+    ALLOWED_HOSTS = [os.environ.get('SITENAME')]
 
 # Application definition
 
