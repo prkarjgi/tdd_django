@@ -2,8 +2,7 @@
 venv/
 
 #
-documentation/Notes.md
-documentation/*.png
+documentation/*.md
 
 #
 *.vscode

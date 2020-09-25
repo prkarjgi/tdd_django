@@ -65,7 +65,9 @@ def _create_or_update_dotenv():
 
 
 def _update_static_files():
-    run("source .env && ./venv/bin/python3.8 manage.py collectstatic --noinput")
+    run(
+        "source .env && ./venv/bin/python3.8 manage.py collectstatic --noinput"
+    )
 
 
 def _update_database():

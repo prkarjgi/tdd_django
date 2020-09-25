@@ -1,62 +1,29 @@
+import os
+import time
+from unittest import skip
+
 from selenium import webdriver
 from selenium.webdriver.common.keys import Keys
 from selenium.common.exceptions import WebDriverException
-# from django.test import LiveServerTestCase
 from django.contrib.staticfiles.testing import StaticLiveServerTestCase
-import os
-import time
+
+from .base import FunctionalTest
 
 MAX_WAIT = 10
 
 
-class NewVisitorTest(StaticLiveServerTestCase):
-    def setUp(self):
-        self.browser = webdriver.Firefox()
-        staging_server = os.getenv('STAGING_SERVER', None)
-        if staging_server is not None:
-            self.live_server_url = "http://" + staging_server
-
-    def tearDown(self):
-        self.browser.quit()
-
-    # helper method
-    def wait_for_new_item_in_todo(self, item_text):
-        start_time = time.time()
-        while True:
-            try:
-                to_do_items = self.browser.find_element_by_id("id_to_do_list")
-                rows = to_do_items.find_elements_by_tag_name("tr")
-                self.assertIn(item_text, [row.text for row in rows])
-                return
-            except (AssertionError, WebDriverException) as e:
-                if time.time() - start_time > MAX_WAIT:
-                    raise e
-                time.sleep(0.5)
-
-    def test_layout_and_styling(self):
-        # User 1 goes to the home page
-        self.browser.get(self.live_server_url)
-        self.browser.set_window_size(1024, 768)
-
-        # They notice that the window box is
-        # nicely centered
-        inputbox = self.browser.find_element_by_id("id_new_item")
-        self.assertAlmostEqual(
-            inputbox.location['x'] + inputbox.size['width'] / 2,
-            512,
-            delta=10
-        )
-
+class NewVisitorTest(FunctionalTest):
     def test_can_start_list_for_one_user(self):
         # User goes to application site
         self.browser.get(self.live_server_url)
 
-        # User sees To-Do in the title of the page and sees To-Do lists in the header
+        # User sees To-Do in the title of the page
+        # and sees To-Do lists in the header
         self.assertIn('To-Do', self.browser.title)
         header_text = self.browser.find_element_by_tag_name('h1').text
         self.assertIn('To-Do', header_text)
 
-        # The user sees an input box telling them to enter a new item to the list
+        # The user sees an input box telling them to enter a new item
         inputbox = self.browser.find_element_by_id('id_new_item')
         self.assertEqual(
             "Enter a new item",
@@ -65,15 +32,15 @@ class NewVisitorTest(StaticLiveServerTestCase):
 
         # The user enters an item in their to-do list
         inputbox.send_keys("Buy 3 milk bags")
-        # They type the item in the text box and hit enter and the page updates and
-        # adds a new item in their to-do list
+        # They type the item in the text box and hit enter and the page updates
+        # and adds a new item in their to-do list
         inputbox.send_keys(Keys.ENTER)
 
         # They see the new item added to the to-do list
         self.wait_for_new_item_in_todo("1: Buy 3 milk bags")
 
-        # The text box is still there and the user can enter another item. They add
-        # another item and hit enter
+        # The text box is still there and the user can enter another item.
+        # They add another item and hit enter
         inputbox = self.browser.find_element_by_id("id_new_item")
         # print(self.browser.current_url)
         inputbox.send_keys("Buy some butter")

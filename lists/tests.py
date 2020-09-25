@@ -53,12 +53,20 @@ class ListViewTest(TestCase):
 
     def test_displays_only_items_for_that_list(self):
         correct_list = List.objects.create()
-        item1 = Item.objects.create(text="This is new item 1", item_list=correct_list)
-        item2 = Item.objects.create(text="This is new item 2", item_list=correct_list)
+        item1 = Item.objects.create(
+            text="This is new item 1", item_list=correct_list
+        )
+        item2 = Item.objects.create(
+            text="This is new item 2", item_list=correct_list
+        )
 
         other_list = List.objects.create()
-        Item.objects.create(text="This is item 1 of other list", item_list=other_list)
-        Item.objects.create(text="This is item 2 of other list", item_list=other_list)
+        Item.objects.create(
+            text="This is item 1 of other list", item_list=other_list
+        )
+        Item.objects.create(
+            text="This is item 2 of other list", item_list=other_list
+        )
 
         response = self.client.get(f'/lists/{correct_list.id}/')
 
