@@ -36,14 +36,3 @@ def new_list(request):
             context={"error": error}
         )
     return redirect(f"/lists/{list_.id}/")
-
-
-'''
-def add_item(request, list_id):
-    list_ = List.objects.get(id=list_id)
-    item_ = Item.objects.create(
-        text=request.POST['new_item_text'],
-        item_list=list_
-    )
-    return redirect(f"/lists/{list_.id}/")
-'''
