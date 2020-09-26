@@ -1,5 +1,6 @@
 from django.http import HttpRequest
 from django.urls import resolve
+from django.utils.html import escape
 from django.test import TestCase
 from lists.models import Item, List
 
@@ -71,10 +72,27 @@ class NewListTest(TestCase):
 
     def test_can_redirect_after_POST_request(self):
         response = self.client.post(
-            '/lists/new', data={"new_item_text": "other new item in to-do"}
+            path='/lists/new',
+            data={"new_item_text": "other new item in to-do"}
         )
         list_ = List.objects.first()
         self.assertRedirects(response, f"/lists/{list_.id}/")
+
+    def test_validation_errors_sent_to_home_page_template(self):
+        response = self.client.post(
+            path="/lists/new", data={"new_item_text": ""}
+        )
+        self.assertEqual(response.status_code, 200)
+        self.assertTemplateUsed(response, "home.html")
+        expected_error = escape("You cannot add an empty list item")
+        self.assertContains(response, expected_error)
+
+    def test_empty_item_not_added_to_list(self):
+        response = self.client.post(
+            path="/lists/new", data={"new_item_text": ""}
+        )
+        self.assertEqual(List.objects.count(), 0)
+        self.assertEqual(Item.objects.count(), 0)
 
 
 class NewItemTest(TestCase):
