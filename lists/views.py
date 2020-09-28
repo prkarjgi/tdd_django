@@ -17,7 +17,7 @@ def view_list(request, list_id):
             item = Item(item_list=list_, text=request.POST["new_item_text"])
             item.full_clean()
             item.save()
-            return redirect(f"/lists/{list_.id}/")
+            return redirect(list_)
         except ValidationError:
             error = escape("You cannot add an empty list item")
     return render(request, "list.html", {"list": list_, "error": error})
@@ -40,4 +40,4 @@ def new_list(request):
             template_name="home.html",
             context={"error": error}
         )
-    return redirect(f"/lists/{list_.id}/")
+    return redirect(list_)
