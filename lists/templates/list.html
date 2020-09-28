@@ -2,7 +2,7 @@
 
 {% block header_text %}Enter a new item to the list{% endblock header_text %}
         
-{% block form_action %}/lists/{{ list.id }}/{% endblock form_action %}
+{% block form_action %}{% url 'view_list' list.id %}{% endblock form_action %}
 
 {% block table %}
     <table id="id_to_do_list" class="table">
