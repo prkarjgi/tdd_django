@@ -6,7 +6,7 @@ from lists.models import Item, List
 
 
 def home_page(request):
-    return render(request, "home.html")
+    return render(request, "lists/home.html")
 
 
 def view_list(request, list_id):
@@ -20,7 +20,7 @@ def view_list(request, list_id):
             return redirect(list_)
         except ValidationError:
             error = escape("You cannot add an empty list item")
-    return render(request, "list.html", {"list": list_, "error": error})
+    return render(request, "lists/list.html", {"list": list_, "error": error})
 
 
 def new_list(request):
@@ -37,7 +37,7 @@ def new_list(request):
         error = "You cannot add an empty list item"
         return render(
             request=request,
-            template_name="home.html",
+            template_name="lists/home.html",
             context={"error": error}
         )
     return redirect(list_)

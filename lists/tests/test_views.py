@@ -9,7 +9,7 @@ from lists.models import Item, List
 class HomePageTest(TestCase):
     def test_home_page_uses_home_template(self):
         response = self.client.get('/')
-        self.assertTemplateUsed(response, 'home.html')
+        self.assertTemplateUsed(response, 'lists/home.html')
 
     # def test_home_page_redirects_after_POST_request(self):
     #     response = self.client.post(
@@ -27,7 +27,7 @@ class ListViewTest(TestCase):
     def test_list_view_uses_list_template(self):
         list_ = List.objects.create()
         response = self.client.get(f'/lists/{list_.id}/')
-        self.assertTemplateUsed(response, 'list.html')
+        self.assertTemplateUsed(response, 'lists/list.html')
 
     def test_displays_only_items_for_that_list(self):
         correct_list = List.objects.create()
@@ -99,7 +99,7 @@ class ListViewTest(TestCase):
             data={"new_item_text": ""}
         )
         self.assertEqual(response.status_code, 200)
-        self.assertTemplateUsed(response, "list.html")
+        self.assertTemplateUsed(response, "lists/list.html")
         expected_error = escape("You cannot add an empty list item")
         self.assertContains(response, expected_error)
 
@@ -125,7 +125,7 @@ class NewListTest(TestCase):
             path="/lists/new", data={"new_item_text": ""}
         )
         self.assertEqual(response.status_code, 200)
-        self.assertTemplateUsed(response, "home.html")
+        self.assertTemplateUsed(response, "lists/home.html")
         expected_error = escape("You cannot add an empty list item")
         self.assertContains(response, expected_error)
 
